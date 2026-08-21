@@ -90,7 +90,7 @@ Enter the GitHub repository owner and repository name when prompted:
 
 ```text
 Enter the GitHub Repository Owner: scikit-learn
-Enter the GitHub Repository Repo: scikit-learn
+Enter the GitHub Repository Name: scikit-learn
 ```
 
 Example output:
@@ -128,6 +128,7 @@ issuepilot/
 ├── src/
 │   └── issuepilot/
 │       ├── __init__.py
+│       ├── prepare.py
 │       ├── fetch_issues.py
 │       ├── main.py
 │       ├── predict.py
@@ -135,7 +136,8 @@ issuepilot/
 ├── tests/
 │   ├── test_fetch_issues.py
 │   ├── test_predict.py
-│   └── test_text_processing.py
+│   ├── test_text_processing.py
+│   └── test_prepare_training_data.py
 ├── .gitignore
 ├── pyproject.toml
 └── README.md
