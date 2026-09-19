@@ -117,8 +117,8 @@ if __name__ == "__main__":
     vue_owner = "vuejs"
     vue_repo = "vue"
 
-    owner = vue_owner
-    repo = vue_repo
+    owner = pandas_owner
+    repo = pandas_repo
 
     all_set_issues = full_retrieve(owner, repo, per_page=100, num_pages=3)
 
