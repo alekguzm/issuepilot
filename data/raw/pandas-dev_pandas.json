@@ -14,7 +14,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/69014",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -23,15 +23,16 @@
         "body": "### Pandas version checks\n\n- [x] I have checked that this issue has not already been reported.\n\n- [x] I have confirmed this bug exists on the [latest version](https://pandas.pydata.org/docs/whatsnew/index.html) of pandas.\n\n- [ ] I have confirmed this bug exists on the [main branch](https://pandas.pydata.org/docs/dev/getting_started/install.html#installing-the-development-version-of-pandas) of pandas.\n\n\n### Reproducible Example\n\n```python\nimport pandas as pd\nimport numpy as np\n\nassert pd.__version__ == \"3.0.5\"\nassert np.__version__ == \"2.5.1\"\n\nnp.testing.assert_array_equal(\n    [\"1970-01-01 00:00:00.001\"],\n    pd.Series([1], dtype=\"datetime64[ms]\").astype(str),\n    strict=False\n)\nnp.testing.assert_array_equal(\n    [\"1970-01-01 00:00:01\"],  # <- value dependent format\n    pd.Series([1000], dtype=\"datetime64[ms]\").astype(str),\n    strict=False\n)\n\nnp.testing.assert_array_equal(\n    [\"1970-01-01T00:00:00.001\"],\n    pd.Series([1], dtype=\"datetime64[ms]\").to_numpy().astype(str),\n    strict=False\n)\nnp.testing.assert_array_equal(\n    [\"1970-01-01T00:00:01.000\"],  # <- unit dependent format\n    pd.Series([1000], dtype=\"datetime64[ms]\").to_numpy().astype(str),\n    strict=False\n)\n```\n\n### Issue Description\n\nThe string formatting of datetimes depends on the values rather than the time unit of the data type. The analogous operation in NumPy only depends on the unit.\n\nI was not able to find a definitive answer on the matter that clarified whether this is intended behavior. I can see that this may have been intended in pandas 1.x where the one and only unit was `ns` which would lead to very long strings in all cases, despite most users probably never working on a ns resolution. \n\n### Expected Behavior\n\nMy understanding is that value-dependent semantics are not desired in pandas these days(?). Given that pandas allows users to define their desired units these days, it seems reasonable to me to make the formatting depend only on the unit rather than the values. \n\nAlternatively, it may be nice to document the intended formatting semantics (unless I missed them and that is already the case).\n\n### Installed Versions\n\n>>> pd.show_versions()\n\nINSTALLED VERSIONS\n------------------\ncommit                : e68db09ecf6427d1b62e565bacf17f2e525a3032\npython                : 3.14.6\npython-bits           : 64\nOS                    : Darwin\nOS-release            : 25.6.0\nVersion               : Darwin Kernel Version 25.6.0: Fri Jul 31 19:17:26 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T6041\nmachine               : arm64\nprocessor             : arm\nbyteorder             : little\nLC_ALL                : None\nLANG                  : en_US.UTF-8\nLOCALE                : en_US.UTF-8\n\npandas                : 3.0.5\nnumpy                 : 2.5.1\ndateutil              : 2.9.0.post0\npip                   : 26.2\nCython                : None\nsphinx                : None\nIPython               : None\nadbc-driver-postgresql: None\nadbc-driver-sqlite    : None\nbs4                   : None\nbottleneck            : None\nfastparquet           : None\nfsspec                : None\nhtml5lib              : None\nhypothesis            : None\ngcsfs                 : None\njinja2                : None\nlxml.etree            : None\nmatplotlib            : None\nnumba                 : None\nnumexpr               : None\nodfpy                 : None\nopenpyxl              : None\npsycopg2              : None\npymysql               : None\npyarrow               : None\npyiceberg             : None\npyreadstat            : None\npytest                : 9.1.1\npython-calamine       : None\npytz                  : None\npyxlsb                : None\ns3fs                  : None\nscipy                 : None\nsqlalchemy            : None\ntables                : None\ntabulate              : 0.10.0\nxarray                : None\nxlrd                  : None\nxlsxwriter            : None\nzstandard             : None\nqtpy                  : None\npyqt5                 : None\n",
         "labels": [
             "Bug",
-            "Needs Triage"
+            "Dtype Conversions",
+            "Needs Discussion"
         ],
         "state": "open",
         "created_at": "2026-09-18T10:13:47Z",
-        "updated_at": "2026-09-18T10:13:47Z",
+        "updated_at": "2026-09-18T22:57:57Z",
         "closed_at": null,
-        "comments_count": 0,
+        "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/69011",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -47,7 +48,7 @@
         "closed_at": "2026-09-18T16:09:55Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/69006",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -56,15 +57,16 @@
         "body": "### Feature Type\n\n- [x] Adding new functionality to pandas\n\n- [ ] Changing existing functionality in pandas\n\n- [ ] Removing existing functionality in pandas\n\n\n### Problem Description\n\nThe function \"pd.crosstab\" shows the count values for all the combinations. As an add-on you can choose \"dropna\" and \"margins\". \nThe function \"value_counts\" does almost the same for a single series, but does not offer to show the total amount (\"margins\"). \n\n### Feature Description\n\nAdd a new feature called \"margin\" (or \"total\") to value_counts, which –in addition– returns the total of all listed value counts (much like \"margins\" for the pd.crosstab function.\n\n### Alternative Solutions\n\n\"margins\" in pd.crosstab\n\nor \n\nprint(df.colA.shape[0])\ndf.colA.value_counts()\n\n### Additional Context\n\nThanks & much obliged !",
         "labels": [
             "Enhancement",
-            "Needs Triage"
+            "Algos",
+            "Closing Candidate"
         ],
         "state": "open",
         "created_at": "2026-09-17T07:23:17Z",
-        "updated_at": "2026-09-17T07:25:42Z",
+        "updated_at": "2026-09-18T23:03:40Z",
         "closed_at": null,
-        "comments_count": 0,
+        "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68962",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -81,7 +83,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68935",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -100,7 +102,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68706",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -117,7 +119,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68705",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -134,7 +136,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68703",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -151,7 +153,7 @@
         "closed_at": "2026-09-16T00:31:34Z",
         "comments_count": 15,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68597",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -168,7 +170,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68505",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -185,7 +187,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68459",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -202,7 +204,7 @@
         "closed_at": null,
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68437",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -219,7 +221,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68433",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -237,7 +239,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68426",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -251,7 +253,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68425",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -271,7 +273,7 @@
         "closed_at": null,
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68372",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -290,7 +292,7 @@
         "closed_at": "2026-09-11T14:46:14Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68354",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -304,7 +306,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68343",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -321,7 +323,7 @@
         "closed_at": null,
         "comments_count": 8,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68310",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -339,7 +341,7 @@
         "closed_at": null,
         "comments_count": 11,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68264",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -353,7 +355,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68199",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -371,7 +373,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68041",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -388,7 +390,7 @@
         "closed_at": null,
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68026",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -406,7 +408,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/68009",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -420,7 +422,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67995",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -434,7 +436,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67994",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -448,7 +450,7 @@
         "closed_at": "2026-09-07T17:29:58Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67993",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -462,7 +464,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67992",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -476,7 +478,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67991",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -492,7 +494,7 @@
         "closed_at": "2026-09-05T19:58:19Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67989",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -509,7 +511,7 @@
         "closed_at": null,
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67986",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -526,7 +528,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67985",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -542,7 +544,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67984",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -558,7 +560,7 @@
         "closed_at": "2026-09-04T07:51:21Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67983",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -574,7 +576,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67982",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -591,7 +593,7 @@
         "closed_at": "2026-09-10T13:43:30Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67970",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -608,7 +610,7 @@
         "closed_at": "2026-09-10T13:43:45Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67969",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -625,7 +627,7 @@
         "closed_at": "2026-09-10T13:44:00Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67967",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -643,7 +645,7 @@
         "closed_at": null,
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67949",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -661,7 +663,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67928",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -677,7 +679,7 @@
         "closed_at": "2026-09-01T20:21:02Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67759",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -694,7 +696,7 @@
         "closed_at": "2026-09-03T15:59:55Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67756",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -712,7 +714,7 @@
         "closed_at": "2026-09-11T15:20:59Z",
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67755",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -731,7 +733,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67754",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -750,7 +752,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67753",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -767,7 +769,7 @@
         "closed_at": null,
         "comments_count": 13,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67751",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -784,7 +786,7 @@
         "closed_at": "2026-09-02T20:45:12Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67728",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -801,7 +803,7 @@
         "closed_at": "2026-09-11T15:15:49Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67727",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -818,7 +820,7 @@
         "closed_at": null,
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67726",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -836,7 +838,7 @@
         "closed_at": "2026-09-10T13:29:29Z",
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67470",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -854,7 +856,7 @@
         "closed_at": "2026-09-03T22:42:03Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67375",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -868,7 +870,7 @@
         "closed_at": "2026-08-29T17:02:41Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67074",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -886,7 +888,7 @@
         "closed_at": "2026-09-10T13:35:30Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67066",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -904,7 +906,7 @@
         "closed_at": null,
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67065",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -920,7 +922,7 @@
         "closed_at": null,
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67064",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -937,7 +939,7 @@
         "closed_at": "2026-09-16T07:17:05Z",
         "comments_count": 9,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67055",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -954,7 +956,7 @@
         "closed_at": "2026-09-01T07:09:27Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67040",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -972,7 +974,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67024",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -990,7 +992,7 @@
         "closed_at": "2026-08-31T21:45:31Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67023",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1007,7 +1009,7 @@
         "closed_at": "2026-08-27T21:46:43Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67022",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1024,7 +1026,7 @@
         "closed_at": "2026-08-29T00:02:05Z",
         "comments_count": 8,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67018",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1042,7 +1044,7 @@
         "closed_at": null,
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67014",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1060,7 +1062,7 @@
         "closed_at": null,
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67012",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1078,7 +1080,7 @@
         "closed_at": null,
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67010",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1095,7 +1097,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67008",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1113,7 +1115,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/67005",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1131,7 +1133,7 @@
         "closed_at": null,
         "comments_count": 8,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66966",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1145,7 +1147,7 @@
         "closed_at": "2026-08-23T01:50:47Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66939",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1162,7 +1164,7 @@
         "closed_at": "2026-09-11T14:24:56Z",
         "comments_count": 10,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66893",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1180,7 +1182,7 @@
         "closed_at": null,
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66877",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1199,7 +1201,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66850",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1216,7 +1218,7 @@
         "closed_at": "2026-08-27T11:37:42Z",
         "comments_count": 11,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66834",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1234,7 +1236,7 @@
         "closed_at": "2026-09-03T18:17:04Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66807",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1251,7 +1253,7 @@
         "closed_at": "2026-08-17T17:11:06Z",
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66774",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1269,7 +1271,7 @@
         "closed_at": "2026-08-16T15:41:08Z",
         "comments_count": 9,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66764",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1285,7 +1287,7 @@
         "closed_at": "2026-09-04T20:56:49Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66761",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1299,7 +1301,7 @@
         "closed_at": "2026-08-15T23:56:58Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66750",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1316,7 +1318,7 @@
         "closed_at": "2026-08-13T01:43:10Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66745",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1333,7 +1335,7 @@
         "closed_at": null,
         "comments_count": 28,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66743",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1349,7 +1351,7 @@
         "closed_at": null,
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66742",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1366,7 +1368,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66740",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1382,7 +1384,7 @@
         "closed_at": "2026-08-14T15:04:40Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66735",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1399,7 +1401,7 @@
         "closed_at": "2026-08-12T10:01:22Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66725",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1416,7 +1418,7 @@
         "closed_at": "2026-08-11T23:24:56Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66724",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1433,7 +1435,7 @@
         "closed_at": "2026-08-10T22:21:34Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66709",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1451,7 +1453,7 @@
         "closed_at": "2026-09-08T17:18:30Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66703",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1465,7 +1467,7 @@
         "closed_at": "2026-08-19T18:58:51Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66699",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1482,7 +1484,7 @@
         "closed_at": "2026-08-11T19:20:14Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66697",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1501,7 +1503,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66688",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1517,7 +1519,7 @@
         "closed_at": "2026-08-29T00:00:57Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66675",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1533,7 +1535,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66674",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1550,7 +1552,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66673",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1567,7 +1569,7 @@
         "closed_at": "2026-09-01T02:09:56Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66672",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1585,7 +1587,7 @@
         "closed_at": "2026-08-30T00:16:25Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66657",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1602,7 +1604,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66656",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1620,7 +1622,7 @@
         "closed_at": "2026-08-15T21:25:31Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66639",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1637,7 +1639,7 @@
         "closed_at": "2026-08-31T21:27:08Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66630",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1655,7 +1657,7 @@
         "closed_at": null,
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66626",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1673,7 +1675,7 @@
         "closed_at": "2026-08-07T18:09:05Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66622",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1689,7 +1691,7 @@
         "closed_at": "2026-08-16T15:51:37Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66616",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1707,7 +1709,7 @@
         "closed_at": null,
         "comments_count": 13,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66615",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1724,7 +1726,7 @@
         "closed_at": "2026-08-08T23:31:02Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66608",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1742,7 +1744,7 @@
         "closed_at": null,
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66605",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1761,7 +1763,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66593",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1775,7 +1777,7 @@
         "closed_at": "2026-08-06T20:03:11Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66588",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1792,7 +1794,7 @@
         "closed_at": "2026-08-24T21:20:25Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66579",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1809,7 +1811,7 @@
         "closed_at": "2026-08-01T17:28:11Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66574",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1827,7 +1829,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66571",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1844,7 +1846,7 @@
         "closed_at": "2026-07-31T23:26:10Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66564",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1863,7 +1865,7 @@
         "closed_at": "2026-08-11T18:21:34Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66552",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1883,7 +1885,7 @@
         "closed_at": "2026-08-07T18:09:36Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66551",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1900,7 +1902,7 @@
         "closed_at": "2026-08-01T00:26:07Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66550",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1920,7 +1922,7 @@
         "closed_at": "2026-08-28T00:39:33Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66549",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1937,7 +1939,7 @@
         "closed_at": "2026-08-21T12:07:13Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66545",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1954,7 +1956,7 @@
         "closed_at": "2026-07-31T20:37:50Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66542",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1972,7 +1974,7 @@
         "closed_at": "2026-09-17T06:36:46Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66527",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -1991,7 +1993,7 @@
         "closed_at": "2026-08-01T02:41:30Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66525",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2009,7 +2011,7 @@
         "closed_at": "2026-08-02T16:41:36Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66524",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2029,7 +2031,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66523",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2047,7 +2049,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66522",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2064,7 +2066,7 @@
         "closed_at": "2026-08-04T16:32:55Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66518",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2081,7 +2083,7 @@
         "closed_at": "2026-08-15T21:25:01Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66517",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2098,7 +2100,7 @@
         "closed_at": null,
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66514",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2115,7 +2117,7 @@
         "closed_at": "2026-07-29T19:59:20Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66510",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2133,7 +2135,7 @@
         "closed_at": "2026-07-30T07:40:43Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66509",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2150,7 +2152,7 @@
         "closed_at": "2026-08-16T16:26:23Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66501",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2167,7 +2169,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66499",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2184,7 +2186,7 @@
         "closed_at": "2026-07-28T17:38:05Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66497",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2201,7 +2203,7 @@
         "closed_at": "2026-07-28T16:41:22Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66496",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2215,7 +2217,7 @@
         "closed_at": "2026-08-01T01:32:56Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66493",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2233,7 +2235,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66490",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2250,7 +2252,7 @@
         "closed_at": "2026-07-28T22:45:38Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66489",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2267,7 +2269,7 @@
         "closed_at": "2026-08-02T15:01:01Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66475",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2284,7 +2286,7 @@
         "closed_at": null,
         "comments_count": 9,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66474",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2303,7 +2305,7 @@
         "closed_at": "2026-07-27T14:42:11Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66470",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2317,7 +2319,7 @@
         "closed_at": "2026-07-27T20:33:27Z",
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66451",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2334,7 +2336,7 @@
         "closed_at": "2026-08-10T01:28:21Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66443",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2350,7 +2352,7 @@
         "closed_at": "2026-07-30T04:46:34Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66437",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2367,7 +2369,7 @@
         "closed_at": "2026-08-04T20:14:57Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66436",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2383,7 +2385,7 @@
         "closed_at": "2026-07-23T09:02:01Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66434",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2400,7 +2402,7 @@
         "closed_at": null,
         "comments_count": 9,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66420",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2417,7 +2419,7 @@
         "closed_at": "2026-07-22T01:15:39Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66413",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2436,7 +2438,7 @@
         "closed_at": "2026-07-21T23:00:09Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66411",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2454,7 +2456,7 @@
         "closed_at": null,
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66410",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2471,7 +2473,7 @@
         "closed_at": "2026-07-23T18:19:27Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66407",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2488,7 +2490,7 @@
         "closed_at": "2026-08-15T01:58:48Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66400",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2507,7 +2509,7 @@
         "closed_at": "2026-08-21T02:54:27Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66391",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2526,7 +2528,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66390",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2543,7 +2545,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66389",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2560,7 +2562,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66382",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2577,7 +2579,7 @@
         "closed_at": "2026-08-05T18:25:18Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66379",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2595,7 +2597,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66378",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2614,7 +2616,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66377",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2634,7 +2636,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66376",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2651,7 +2653,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66374",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2669,7 +2671,7 @@
         "closed_at": "2026-08-16T20:18:54Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66373",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2686,7 +2688,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66372",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2704,7 +2706,7 @@
         "closed_at": null,
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66368",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2718,7 +2720,7 @@
         "closed_at": "2026-07-17T18:22:47Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66359",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2736,7 +2738,7 @@
         "closed_at": "2026-08-15T21:57:45Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66356",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2753,7 +2755,7 @@
         "closed_at": "2026-08-08T14:37:33Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66349",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2770,7 +2772,7 @@
         "closed_at": "2026-08-15T19:12:41Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66348",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2787,7 +2789,7 @@
         "closed_at": "2026-07-16T00:50:50Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66347",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2804,7 +2806,7 @@
         "closed_at": "2026-09-03T18:36:37Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66346",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2821,7 +2823,7 @@
         "closed_at": "2026-08-28T14:39:02Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66341",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2837,7 +2839,7 @@
         "closed_at": null,
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66333",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2854,7 +2856,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66329",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2871,7 +2873,7 @@
         "closed_at": "2026-07-14T03:54:41Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66310",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2888,7 +2890,7 @@
         "closed_at": "2026-07-12T19:37:31Z",
         "comments_count": 8,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66292",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2906,7 +2908,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66289",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2924,7 +2926,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66287",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2941,7 +2943,7 @@
         "closed_at": "2026-07-11T00:09:28Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66285",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2960,7 +2962,7 @@
         "closed_at": null,
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66281",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2976,7 +2978,7 @@
         "closed_at": "2026-08-18T00:22:03Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66268",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -2993,7 +2995,7 @@
         "closed_at": "2026-08-19T00:11:07Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66266",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3009,7 +3011,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66263",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3026,7 +3028,7 @@
         "closed_at": "2026-08-10T20:51:29Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66261",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3043,7 +3045,7 @@
         "closed_at": "2026-08-11T16:12:46Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66259",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3060,7 +3062,7 @@
         "closed_at": "2026-07-13T21:23:19Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66257",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3078,7 +3080,7 @@
         "closed_at": "2026-09-17T06:36:46Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66255",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3095,7 +3097,7 @@
         "closed_at": "2026-07-10T15:40:25Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66241",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3109,7 +3111,7 @@
         "closed_at": "2026-07-09T17:04:00Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66232",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3126,7 +3128,7 @@
         "closed_at": "2026-08-22T15:18:29Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66215",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3142,7 +3144,7 @@
         "closed_at": "2026-07-09T13:33:27Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66211",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3159,7 +3161,7 @@
         "closed_at": "2026-08-01T15:18:17Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66207",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3176,7 +3178,7 @@
         "closed_at": "2026-07-08T21:43:49Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66205",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3193,7 +3195,7 @@
         "closed_at": null,
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66203",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3210,7 +3212,7 @@
         "closed_at": "2026-07-08T21:12:18Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66197",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3227,7 +3229,7 @@
         "closed_at": "2026-07-16T00:23:10Z",
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66195",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3241,7 +3243,7 @@
         "closed_at": "2026-07-07T19:12:08Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66193",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3258,7 +3260,7 @@
         "closed_at": "2026-07-08T21:08:54Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66192",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3276,7 +3278,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66177",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3293,7 +3295,7 @@
         "closed_at": "2026-09-08T00:52:56Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66151",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3310,7 +3312,7 @@
         "closed_at": "2026-08-16T01:05:15Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66142",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3328,7 +3330,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66140",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3346,7 +3348,7 @@
         "closed_at": "2026-08-11T21:24:49Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66138",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3363,7 +3365,7 @@
         "closed_at": "2026-07-04T14:12:24Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66133",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3380,7 +3382,7 @@
         "closed_at": "2026-07-04T17:38:37Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66105",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3397,7 +3399,7 @@
         "closed_at": "2026-07-13T20:28:36Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66104",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3411,7 +3413,7 @@
         "closed_at": "2026-06-30T15:10:11Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66102",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3428,7 +3430,7 @@
         "closed_at": "2026-07-02T17:16:08Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66100",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3442,7 +3444,7 @@
         "closed_at": "2026-07-13T20:28:36Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66089",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3459,7 +3461,7 @@
         "closed_at": "2026-06-29T00:16:21Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66087",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3473,7 +3475,7 @@
         "closed_at": "2026-07-13T20:28:36Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66086",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3487,7 +3489,7 @@
         "closed_at": "2026-07-13T20:28:35Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66085",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3501,7 +3503,7 @@
         "closed_at": "2026-07-13T20:28:35Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66083",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3518,7 +3520,7 @@
         "closed_at": null,
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66080",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3535,7 +3537,7 @@
         "closed_at": "2026-06-27T23:36:33Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66069",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3551,7 +3553,7 @@
         "closed_at": "2026-06-27T18:52:07Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66054",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3569,7 +3571,7 @@
         "closed_at": "2026-06-27T10:09:58Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66050",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3583,7 +3585,7 @@
         "closed_at": "2026-06-26T17:26:33Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66039",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3601,7 +3603,7 @@
         "closed_at": "2026-06-27T03:31:30Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66038",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3617,7 +3619,7 @@
         "closed_at": "2026-06-26T04:31:37Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66035",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3633,7 +3635,7 @@
         "closed_at": "2026-06-25T17:54:18Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66017",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3650,7 +3652,7 @@
         "closed_at": "2026-06-24T19:00:31Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66012",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3668,7 +3670,7 @@
         "closed_at": "2026-07-11T07:48:54Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/66009",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3685,7 +3687,7 @@
         "closed_at": "2026-06-25T16:31:37Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65989",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3699,7 +3701,7 @@
         "closed_at": "2026-06-23T16:30:59Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65987",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3713,7 +3715,7 @@
         "closed_at": "2026-06-20T19:19:16Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65917",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3731,7 +3733,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65915",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3748,7 +3750,7 @@
         "closed_at": "2026-06-19T21:20:28Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65914",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3765,7 +3767,7 @@
         "closed_at": "2026-06-24T19:14:34Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65911",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3783,7 +3785,7 @@
         "closed_at": "2026-06-18T20:49:41Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65908",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3799,7 +3801,7 @@
         "closed_at": "2026-06-29T16:32:49Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65905",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3815,7 +3817,7 @@
         "closed_at": "2026-06-29T16:32:48Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65904",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3831,7 +3833,7 @@
         "closed_at": "2026-06-29T16:32:48Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65903",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3848,7 +3850,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65899",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3865,7 +3867,7 @@
         "closed_at": "2026-06-22T09:32:52Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65895",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3883,7 +3885,7 @@
         "closed_at": "2026-06-25T20:52:33Z",
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65894",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3902,7 +3904,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65892",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3918,7 +3920,7 @@
         "closed_at": null,
         "comments_count": 10,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65891",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3935,7 +3937,7 @@
         "closed_at": "2026-06-16T07:14:41Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65889",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3953,7 +3955,7 @@
         "closed_at": "2026-08-05T00:43:25Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65881",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3967,7 +3969,7 @@
         "closed_at": "2026-06-14T14:17:52Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65880",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3985,7 +3987,7 @@
         "closed_at": "2026-08-07T00:47:23Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65877",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -3999,7 +4001,7 @@
         "closed_at": "2026-06-13T01:29:25Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65872",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4013,7 +4015,7 @@
         "closed_at": "2026-06-13T00:59:46Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65871",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4032,7 +4034,7 @@
         "closed_at": "2026-06-13T14:10:34Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65870",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4050,7 +4052,7 @@
         "closed_at": "2026-06-27T22:25:13Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65868",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4064,7 +4066,7 @@
         "closed_at": "2026-06-12T12:45:08Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65865",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4081,7 +4083,7 @@
         "closed_at": "2026-06-30T21:51:49Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65863",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4097,7 +4099,7 @@
         "closed_at": "2026-06-15T08:42:45Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65857",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4114,7 +4116,7 @@
         "closed_at": "2026-06-10T03:42:26Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65838",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4133,7 +4135,7 @@
         "closed_at": "2026-06-18T18:00:57Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65837",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4149,7 +4151,7 @@
         "closed_at": "2026-06-09T15:50:58Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65834",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4167,7 +4169,7 @@
         "closed_at": "2026-06-20T10:59:23Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65833",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4183,7 +4185,7 @@
         "closed_at": "2026-07-07T16:23:17Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65813",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4200,7 +4202,7 @@
         "closed_at": "2026-06-17T21:23:49Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65810",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4218,7 +4220,7 @@
         "closed_at": null,
         "comments_count": 15,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65805",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4235,7 +4237,7 @@
         "closed_at": "2026-06-03T16:44:49Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65804",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4252,7 +4254,7 @@
         "closed_at": "2026-07-09T14:26:22Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65778",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4270,7 +4272,7 @@
         "closed_at": "2026-07-13T00:48:24Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65770",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4287,7 +4289,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65765",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4304,7 +4306,7 @@
         "closed_at": null,
         "comments_count": 12,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65740",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4320,7 +4322,7 @@
         "closed_at": "2026-06-03T07:11:03Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65737",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4339,7 +4341,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65735",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4355,7 +4357,7 @@
         "closed_at": null,
         "comments_count": 8,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65734",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4371,7 +4373,7 @@
         "closed_at": "2026-07-10T02:47:09Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65730",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4389,7 +4391,7 @@
         "closed_at": null,
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65712",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4408,7 +4410,7 @@
         "closed_at": "2026-06-23T20:11:42Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65710",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4424,7 +4426,7 @@
         "closed_at": "2026-06-27T16:13:29Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65700",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4441,7 +4443,7 @@
         "closed_at": "2026-09-01T20:59:12Z",
         "comments_count": 9,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65690",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4458,7 +4460,7 @@
         "closed_at": "2026-05-21T14:34:35Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65685",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4475,7 +4477,7 @@
         "closed_at": "2026-05-19T20:08:10Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65684",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4494,7 +4496,7 @@
         "closed_at": "2026-08-19T01:45:17Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65676",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4512,7 +4514,7 @@
         "closed_at": "2026-06-28T07:29:41Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65664",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4529,7 +4531,7 @@
         "closed_at": "2026-06-27T00:13:08Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65654",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4546,7 +4548,7 @@
         "closed_at": "2026-06-02T23:26:16Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65652",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4564,7 +4566,7 @@
         "closed_at": null,
         "comments_count": 8,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65649",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4582,7 +4584,7 @@
         "closed_at": null,
         "comments_count": 7,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65608",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4600,7 +4602,7 @@
         "closed_at": "2026-06-10T08:22:12Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65588",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4619,7 +4621,7 @@
         "closed_at": "2026-05-09T16:23:27Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65553",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4639,7 +4641,7 @@
         "closed_at": "2026-05-15T11:33:32Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65550",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4657,7 +4659,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65524",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4674,7 +4676,7 @@
         "closed_at": "2026-05-08T07:25:18Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65518",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4693,7 +4695,7 @@
         "closed_at": "2026-07-08T21:04:34Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65500",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4711,7 +4713,7 @@
         "closed_at": "2026-08-02T22:58:12Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65483",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4730,7 +4732,7 @@
         "closed_at": "2026-06-27T00:38:19Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65478",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4748,7 +4750,7 @@
         "closed_at": "2026-05-06T16:02:05Z",
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65472",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4764,7 +4766,7 @@
         "closed_at": "2026-05-21T19:22:27Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65469",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4781,7 +4783,7 @@
         "closed_at": "2026-05-05T16:36:11Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65462",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4798,7 +4800,7 @@
         "closed_at": "2026-08-31T19:55:50Z",
         "comments_count": 10,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65458",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4816,7 +4818,7 @@
         "closed_at": null,
         "comments_count": 6,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65452",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4834,7 +4836,7 @@
         "closed_at": "2026-06-15T13:31:22Z",
         "comments_count": 12,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65446",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4851,7 +4853,7 @@
         "closed_at": null,
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65419",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4869,7 +4871,7 @@
         "closed_at": "2026-09-05T21:45:51Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65408",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4885,7 +4887,7 @@
         "closed_at": "2026-07-17T22:57:22Z",
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65393",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4902,7 +4904,7 @@
         "closed_at": "2026-07-14T16:22:58Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65382",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4921,7 +4923,7 @@
         "closed_at": null,
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65381",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4938,7 +4940,7 @@
         "closed_at": "2026-05-08T21:18:28Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65380",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4954,7 +4956,7 @@
         "closed_at": "2026-04-27T10:44:28Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65375",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4971,7 +4973,7 @@
         "closed_at": "2026-08-29T17:59:41Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65373",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -4988,7 +4990,7 @@
         "closed_at": "2026-05-05T21:32:51Z",
         "comments_count": 1,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65369",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -5005,7 +5007,7 @@
         "closed_at": "2026-04-28T21:35:06Z",
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65361",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -5022,7 +5024,7 @@
         "closed_at": "2026-05-03T13:50:53Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65357",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -5041,7 +5043,7 @@
         "closed_at": "2026-09-16T20:27:42Z",
         "comments_count": 5,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65345",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -5059,7 +5061,7 @@
         "closed_at": "2026-05-03T13:22:26Z",
         "comments_count": 0,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65333",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -5077,7 +5079,7 @@
         "closed_at": null,
         "comments_count": 3,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65326",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -5095,7 +5097,7 @@
         "closed_at": null,
         "comments_count": 2,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65324",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     },
     {
         "repository": "pandas-dev/pandas",
@@ -5114,6 +5116,6 @@
         "closed_at": "2026-06-30T02:47:58Z",
         "comments_count": 4,
         "html_url": "https://github.com/pandas-dev/pandas/issues/65320",
-        "collected_at": "2026-09-18T17:56:57.583775+00:00"
+        "collected_at": "2026-09-19T03:12:01.522020+00:00"
     }
 ]
