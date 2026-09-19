@@ -1,5 +1,4 @@
 # Gather issues from github repos
-#   filter out pull requests
 
 import requests
 from requests.exceptions import HTTPError
@@ -12,7 +11,7 @@ from pathlib import Path
 #RETURNS: raw list of issues
 def get_issues(owner, repo, state, per_page, num_pages):
 
-    url = f"https://api.github.com/repos/{owner}/{repo}/issues"
+    url = f"https://api.github.com/search/issues"
 
     headers = {
         "Accept": "application/vnd.github+json",
@@ -25,10 +24,14 @@ def get_issues(owner, repo, state, per_page, num_pages):
     for page in range(1, num_pages+1):
 
         query_params = {
-            "state": state, 
+            "q": f"repo:{owner}/{repo} type:issue ",
             "per_page": per_page,
             "page": page
         }
+        if state == 'open':
+            query_params["q"] += "is:open"
+        elif state == 'closed':
+            query_params["q"] += "is:closed"
 
         try:
             r = requests.get(url, 
@@ -38,7 +41,7 @@ def get_issues(owner, repo, state, per_page, num_pages):
 
             r.raise_for_status()
 
-            converted_page = r.json()
+            converted_page = r.json()["items"]
             raw_counter += len(converted_page)
 
             raw_issues += converted_page
@@ -59,22 +62,6 @@ def get_issues(owner, repo, state, per_page, num_pages):
     print(f"Raw API results inspected: {raw_counter}")
 
     return raw_issues
-    
-
-#Filters out issues that are pull requests 
-#returns ordinary issues only
-#PARAM: raw list of issues
-def filter_pulls(raw_issues):
-
-    ord_issues = []
-
-    for issue in raw_issues:
-        if 'pull_request' in issue:
-            continue
-        ord_issues.append(issue)
-
-    print(f"Ordinary results inspected: {len(ord_issues)}")
-    return ord_issues
 
 #Simplify each issue (keep only important features)
 #PARAMS: issues, owner, repo
@@ -108,27 +95,32 @@ def normalize_issues(issues, owner, repo):
 
     return new_issues
 
-#Combine get_issues, filter_pulls, and normalize_issues
+#Combine get_issues, and normalize_issues
 #This will get the issues from the repo, filter out the pulls, and fix the dictionary
-def full_retrieve(owner, repo, state="all", per_page=30, num_pages=1):
+def full_retrieve(owner, repo, state="all", per_page=30, num_pages=1): #default (Dont touch)
 
     raw_issues = get_issues(owner, repo, state, per_page, num_pages)
     if raw_issues is None:
         return None
     
-    filtered_issues = filter_pulls(raw_issues)
-    all_set_issues = normalize_issues(filtered_issues, owner, repo)
+    all_set_issues = normalize_issues(raw_issues, owner, repo)
     return all_set_issues
 
 #Used when im gathing data for training
 #not used by user
 if __name__ == "__main__":
 
+    scikit_owner = "scikit-learn"
+    scikit_repo = "scikit-learn"
+    pandas_owner = "pandas-dev"
+    pandas_repo = "pandas"
+    vue_owner = "vuejs"
+    vue_repo = "vue"
 
-    owner = "scikit-learn"
-    repo = "scikit-learn"
+    owner = vue_owner
+    repo = vue_repo
 
-    all_set_issues = full_retrieve(owner, repo)
+    all_set_issues = full_retrieve(owner, repo, per_page=100, num_pages=3)
 
     root_path = Path(__file__).resolve().parents[2]
     filename = root_path / "data" / "raw" / f"{owner}_{repo}.json"
