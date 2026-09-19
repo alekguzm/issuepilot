@@ -1,0 +1,95 @@
+[
+    {
+        "repository": "scikit-learn/scikit-learn",
+        "issue_number": 34989,
+        "title": "Clarify parameter/hyperparameter terminology in the cross-validation workflow diagram",
+        "body": "> [!WARNING]\n> This issue is not yet ready for a PR. If you are interested in contributing to scikit-learn, please have a look at our [contributing guidelines](https://scikit-learn.org/dev/developers/contributing.html), and in particular the sections for [new contributors](https://scikit-learn.org/dev/developers/contributing.html#new-contributors) and the [\"Needs triage\"](https://scikit-learn.org/dev/developers/contributing.html#issues-tagged-needs-triage) label.\n\n### Introduce yourself\n\nI teach machine learning engineering to people who are new to machine learning.\n\n### Describe the issue linked to the documentation\n\nI use `GridSearchCV` to help learners understand grid search, model selection, and good practice. I think it is a fantastic teaching tool, and the user guide is excellent.\n\nI've taught this section several times and have repeatedly needed to explain why the diagram says \"parameters\" when we are discussing hyperparameters. This is a recurring point of confusion in my teaching, which prompted this issue.\n\nThe overall workflow diagram in the cross-validation user guide uses the labels **\"Parameters\"** and **\"Best parameters\"**.\n\nUser guide:\nhttps://scikit-learn.org/stable/modules/cross_validation.html\n\nDirect link to the diagram:\nhttps://scikit-learn.org/stable/_images/grid_search_workflow.png\n\nMy learners are meeting the terms \"parameter\" and \"hyperparameter\" for the first time. They are still learning the difference between settings we specify or search over, such as a decision tree's maximum depth, and values the model learns during fitting.\n\nWhen I explain grid search, I describe it as comparing hyperparameter settings. The diagram calls these \"Parameters\" and \"Best parameters\". I then have to explain why the same settings are being called by two different names, while learners are still trying to understand what those names mean.\n\nI understand that scikit-learn uses \"parameters\" for estimator constructor settings. The glossary explains this convention:\nhttps://scikit-learn.org/stable/glossary.html#term-parameter\n\nThe cross-validation guide also uses the word \"hyperparameters\". A short explanation at the diagram would help beginners connect the two terms.\n\n### Suggest a potential alternative/fix\n\nCould a short note be added beside or below the diagram to explain how \"parameters\" relates to \"hyperparameters\"? For example:\n\n> Here, \"parameters\" means configurable estimator settings. These can include machine-learning hyperparameters, such as a decision tree's `max_depth`, as well as other configuration choices, such as which estimator or pipeline step to use. They are different from values learned by the model during fitting.\n\nThe note could link to the glossary:\nhttps://scikit-learn.org/stable/glossary.html#term-parameter\n\nThe diagram could keep its existing labels. The note would help beginners understand why settings such as `max_depth` may be called \"hyperparameters\" in machine-learning terminology while scikit-learn uses the broader term \"parameters\".",
+        "labels": [
+            "Documentation",
+            "Needs Triage"
+        ],
+        "state": "open",
+        "created_at": "2026-09-18T14:07:25Z",
+        "updated_at": "2026-09-18T14:07:41Z",
+        "closed_at": null,
+        "comments_count": 0,
+        "html_url": "https://github.com/scikit-learn/scikit-learn/issues/34989",
+        "collected_at": "2026-09-18T17:11:39.383515+00:00"
+    },
+    {
+        "repository": "scikit-learn/scikit-learn",
+        "issue_number": 34987,
+        "title": "BUG fetch_file(url, folder=...) crashes with confusing FileNotFoundError instead of creating the directory",
+        "body": "> [!WARNING]\n> This issue is not yet ready for a PR. If you are interested in contributing to scikit-learn, please have a look at our [contributing guidelines](https://scikit-learn.org/dev/developers/contributing.html), and in particular the sections for [new contributors](https://scikit-learn.org/dev/developers/contributing.html#new-contributors) and the [\"Needs triage\"](https://scikit-learn.org/dev/developers/contributing.html#issues-tagged-needs-triage) label.\n\n### Describe the bug\n\n`sklearn.datasets.fetch_file(url, folder=...)` raises a confusing, low-level `FileNotFoundError` instead of creating the target directory when the caller passes an explicit `folder` that doesn't exist yet.\n\nThe docstring for `folder` doesn't state that the directory must already exist:\n\n> `folder` : str or Path, default=None\n> Directory to save the file to. If None, the file is downloaded in a folder with a name derived from the URL host name and path under scikit-learn data home folder.\n\nBut directory creation only happens for the *default* case:\n\nhttps://github.com/scikit-learn/scikit-learn/blob/main/sklearn/datasets/_base.py#L1639-L1642\n\n```python\nif folder is None:\n    folder = Path(get_data_home()) / folder_from_url\n    makedirs(folder, exist_ok=True)\n```\n\n`makedirs(..., exist_ok=True)` is nested inside `if folder is None:`, so it only runs when `fetch_file` derives the folder itself. When the caller explicitly passes `folder=`, no directory creation happens at all. Downstream, `_fetch_remote` (same file, around line 1502) does:\n\n```python\ntemp_file = NamedTemporaryFile(\n    prefix=remote.filename + \".part_\", dir=folder_path, delete=False\n)\n```\n\nwhich raises `FileNotFoundError` if `folder_path` doesn't exist — an opaque, low-level crash referencing an internal `.part_...` temp-file name that the user never specified, rather than a clear message about the missing directory.\n\n### Steps/Code to Reproduce\n\n```python\nimport tempfile\nfrom pathlib import Path\nfrom sklearn.datasets import fetch_file\n\n# Using a local file:// URL as the \"remote\" source, no network required.\nsrc_file = Path(tempfile.mkdtemp()) / \"source.csv\"\nsrc_file.write_text(\"a,b,c\\n1,2,3\\n\")\nurl = \"file://localhost\" + str(src_file)\n\ntarget_dir = Path(tempfile.mkdtemp()) / \"does_not_exist_yet\"\nprint(\"target_dir exists before:\", target_dir.exists())\n\nfetch_file(url, folder=target_dir)\n```\n\n### Expected Results\n\nEither the directory gets created (matching what already happens for the default `folder=None` case — verified working), or a clear, actionable error naming the missing directory.\n\nFor comparison, the default-folder path already creates the directory transparently and succeeds:\n```python\nresult = fetch_file(url)  # folder=None (default)\nprint(result, result.exists())  # succeeds, directory auto-created\n```\n\n### Actual Results\n\n```\ntarget_dir exists before: False\nTraceback (most recent call last):\n  ...\nFileNotFoundError: [Errno 2] No such file or directory: '/.../does_not_exist_yet/source.csv.part_1flw14k2'\n```\n\n### Versions\n\nReproduced on current `main`, no network access required (repro uses a local `file://` URL). This appears to have existed since `fetch_file` was introduced (#29354) — no prior discussion of this specific asymmetry found.\n\n---\n\nI dug into this while looking for an unrelated fix and haven't opened a PR — the obvious fix is to move (or duplicate) the `makedirs(folder, exist_ok=True)` call so it also runs for a caller-supplied `folder`, mirroring the default-path behavior. Happy to put a PR together if that direction looks right to a maintainer.\n",
+        "labels": [
+            "Needs Triage"
+        ],
+        "state": "open",
+        "created_at": "2026-09-18T06:28:09Z",
+        "updated_at": "2026-09-18T07:03:13Z",
+        "closed_at": null,
+        "comments_count": 1,
+        "html_url": "https://github.com/scikit-learn/scikit-learn/issues/34987",
+        "collected_at": "2026-09-18T17:11:39.383515+00:00"
+    },
+    {
+        "repository": "scikit-learn/scikit-learn",
+        "issue_number": 34979,
+        "title": "Clarify the random_state description in train_test_split documentation",
+        "body": "### Introduce yourself\n\n_No response_\n\n### Describe the issue linked to the documentation\n\nThe random_state parameter in train_test_split could use a slightly clearer explanation for beginners.\n\nIt would be helpful to explicitly mention that using the same integer value produces the same split across repeated calls, assuming the same input data and parameters.\n\n### Suggest a potential alternative/fix\n\nAdd a short sentence to the random_state parameter documentation explaining that a fixed integer makes the split reproducible.",
+        "labels": [
+            "Documentation"
+        ],
+        "state": "open",
+        "created_at": "2026-09-17T11:04:10Z",
+        "updated_at": "2026-09-18T01:12:01Z",
+        "closed_at": null,
+        "comments_count": 1,
+        "html_url": "https://github.com/scikit-learn/scikit-learn/issues/34979",
+        "collected_at": "2026-09-18T17:11:39.383515+00:00"
+    },
+    {
+        "repository": "scikit-learn/scikit-learn",
+        "issue_number": 34977,
+        "title": "⚠️ CI failed on Wheel builder (last failure: Sep 17, 2026) ⚠️",
+        "body": "**CI failed on [Wheel builder](https://github.com/scikit-learn/scikit-learn/actions/runs/35179514326)** (Sep 17, 2026)\n",
+        "labels": [],
+        "state": "open",
+        "created_at": "2026-09-17T04:53:44Z",
+        "updated_at": "2026-09-18T04:44:00Z",
+        "closed_at": null,
+        "comments_count": 2,
+        "html_url": "https://github.com/scikit-learn/scikit-learn/issues/34977",
+        "collected_at": "2026-09-18T17:11:39.383515+00:00"
+    },
+    {
+        "repository": "scikit-learn/scikit-learn",
+        "issue_number": 34975,
+        "title": "BUG confusion_matrix_at_thresholds / roc_auc_score lose precision on plain numpy when y_score is float32 (regression from #34817)",
+        "body": "### Describe the bug\n\n`confusion_matrix_at_thresholds` (and everything built on it: `roc_curve`, `precision_recall_curve`, `det_curve`, `roc_auc_score`) silently loses integer precision on **plain numpy** — not just the restricted array-API devices that #34817 was fixing — whenever the caller's `y_score` array is `float32`. Model scores/predictions are very commonly stored as `float32` (e.g. to save memory), so this is not an exotic input.\n\nThis looks like a regression introduced this week by #34817 (merged 2026-08-31), which switched the unweighted cumulative-sum path to compute exact `int64` counts and then cast them to `output_dtype`:\n\nhttps://github.com/scikit-learn/scikit-learn/blob/main/sklearn/metrics/_ranking.py#L1028-L1039\n\n```python\ny_true_int = xp.astype(y_true, xp.int64)\ntps_int = xp.cumulative_sum(y_true_int, dtype=xp.int64)[threshold_idxs]\nfps_int = (xp.astype(threshold_idxs, xp.int64) + 1) - tps_int\n\noutput_dtype = (\n    y_score.dtype\n    if hasattr(y_score, \"dtype\") and xp.isdtype(y_score.dtype, \"real floating\")\n    else _max_precision_float_dtype(xp, device)\n)\ntps = xp.astype(tps_int, output_dtype)\nfps = xp.astype(fps_int, output_dtype)\n```\n\n`output_dtype` is set to `y_score.dtype` whenever `y_score` is real-floating, instead of the device's max-precision float dtype (`_max_precision_float_dtype(xp, device)`, which is always `float64` on plain numpy). So on ordinary numpy — where `float64` is always available — if `y_score` happens to be `float32`, the exact `int64` counts get needlessly downcast to `float32`, which cannot represent integers exactly above 2**24 (~16.7M). The weighted branch right below doesn't have this problem: it always uses `max_float_dtype` regardless of `y_score`'s dtype.\n\nThis is exactly the precision-loss bug class #34817/#34813 set out to fix, just reintroduced on the ordinary numpy path whenever the *input* `y_score` happens to be float32 — a case the fix's own test suite doesn't cover (the added test `test_confusion_matrix_at_thresholds_float32_only_unweighted_large_n` only exercises the `array_api_strict` \"no float64\" restricted-device scenario, not plain numpy with a float32 `y_score`).\n\n### Steps/Code to Reproduce\n\n```python\nimport numpy as np\nfrom sklearn.metrics import confusion_matrix_at_thresholds, roc_auc_score\n\nrng = np.random.RandomState(0)\nn = 20_000_000\ny_true = (rng.rand(n) < 0.9).astype(np.int32)\ny_score64 = rng.rand(n).astype(np.float64)\ny_score32 = y_score64.astype(np.float32)  # e.g. model scores stored as float32\n\n_, _, _, tps64, _ = confusion_matrix_at_thresholds(y_true, y_score64)\n_, _, _, tps32, _ = confusion_matrix_at_thresholds(y_true, y_score32)\n\nprint(\"tps64 dtype:\", tps64.dtype, \"last value:\", tps64[-1])\nprint(\"tps32 dtype:\", tps32.dtype, \"last value:\", tps32[-1])\nprint(\"n_pos (exact):\", y_true.sum())\n\nprint(\"roc_auc_score (float64 y_score):\", roc_auc_score(y_true, y_score64))\nprint(\"roc_auc_score (float32 y_score):\", roc_auc_score(y_true, y_score32))\n```\n\n### Expected Results\n\n`tps` should be exact regardless of `y_score`'s dtype, on a device where `float64` is available (matching the weighted branch's behavior, and matching pre-#34817 behavior):\n\n```\ntps64 dtype: float64 last value: 18000923.0\ntps32 dtype: float64 last value: 18000923.0\nn_pos (exact): 18000923\n```\n\n### Actual Results\n\n```\ntps64 dtype: float64 last value: 18000923.0\ntps32 dtype: float32 last value: 18000924.0\nn_pos (exact): 18000923\nroc_auc_score (float64 y_score): 0.500012352595143\nroc_auc_score (float32 y_score): 0.5000123248180354\n```\n\nThe `float32`-`y_score` run silently gives a wrong (off-by-one, and for larger `n` increasingly wrong) true-positive count and a slightly different `roc_auc_score`, purely because of `y_score`'s dtype — with no warning and no restricted-device context involved.\n\n### Versions\n\nReproduced on current `main` (post-#34817, i.e. including the fix for #34813/#34827) with plain numpy — no `array_api_dispatch` context, no array-API device involved.\n\n---\n\nI dug into this while looking for an unrelated fix and haven't opened a PR — happy to put one together (the obvious fix is to use `_max_precision_float_dtype(xp, device)` unconditionally for `output_dtype`, mirroring the weighted branch, since it's already computed as the fallback) if that direction looks right to a maintainer.\n",
+        "labels": [
+            "Numerical Stability"
+        ],
+        "state": "open",
+        "created_at": "2026-09-17T00:57:18Z",
+        "updated_at": "2026-09-17T13:39:21Z",
+        "closed_at": null,
+        "comments_count": 5,
+        "html_url": "https://github.com/scikit-learn/scikit-learn/issues/34975",
+        "collected_at": "2026-09-18T17:11:39.383515+00:00"
+    },
+    {
+        "repository": "scikit-learn/scikit-learn",
+        "issue_number": 34964,
+        "title": "I cannot get the scikit-learn development Codespace into the intended development environment.",
+        "body": "### Introduce yourself\n\nI am very new in this field of open source. One day a thing clicked into my mind that we should contribute to the open source and for this i forked SK learn library. But due to the restrictions of my hardware i tried to open it in \"CODESPACE\". But when i initialized the codespace every time it failed and showed a message that the codespace is opened in Recovery mode.\n\n### Describe the bug and give evidence about its user-facing impact\n\nWhen creating a GitHub Codespace from a fork of scikit-learn, the Codespace enters recovery mode instead of starting the intended development environment.\n\nThe terminal reports:\n\n\"This codespace is currently running in recovery mode due to a container error.\"\n\nThe issue prevents me from obtaining the normal scikit-learn development environment in Codespaces.\n\nI observed this consistently when creating a fresh Codespace from my fork. The repository's `.devcontainer/devcontainer.json` runs `.devcontainer/setup.sh` as its `onCreateCommand`, and the setup script uses `micromamba activate sklearn-dev`.\n\nThe attached screenshots/logs show the recovery-mode error and the Codespaces creation log.\n\n### Steps/Code to Reproduce\n\n1. Fork the `scikit-learn/scikit-learn` repository.\n2. Keep the fork on the `main` branch.\n3. Open the fork and create a new GitHub Codespace from the repository.\n4. Wait for the Codespace to finish creating.\n5. The Codespace opens in recovery mode and displays the message:\n   `This codespace is currently running in recovery mode due to a container error.`\n6. Open the terminal and observe the recovery-mode message.\n\nThe repository's `.devcontainer/devcontainer.json` specifies:\n```json\n\"onCreateCommand\": \".devcontainer/setup.sh\"\n\nThe setup script subsequently runs:\nmicromamba activate sklearn-dev\n\nwhich is where the Shell not initialized error occurs in my reproduction.\n\n### Expected Results\n\nThe Codespace should be created successfully and open in the normal scikit-learn development environment, with the `sklearn-dev` micromamba environment configured and activated as intended.\n\n### Actual Results\n\nThe Codespace enters recovery mode instead of starting the intended scikit-learn development environment.\n\nThe terminal displays:\nThis codespace is currently running in recovery mode due to a container error.\n\n<img width=\"901\" height=\"314\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/66e24ae1-dbf7-43c3-9230-2254ae65f5d5\" />\n\n<img width=\"1594\" height=\"744\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/ca06856e-4476-4364-a626-3b7bebed9477\" />\n\n\n### Versions\n\n```shell\n### Versions\n\n- Python: 3.12.14\n- OS: Alpine Linux 3.23.5\n- scikit-learn commit: `0f1488a12daacc54893bcb43d1fc2738ca0ad222`\n```\n\n### Interest in fixing the bug\n\n**Yes, I would be interested in working on this issue.**",
+        "labels": [],
+        "state": "open",
+        "created_at": "2026-09-15T06:44:47Z",
+        "updated_at": "2026-09-17T08:28:55Z",
+        "closed_at": null,
+        "comments_count": 3,
+        "html_url": "https://github.com/scikit-learn/scikit-learn/issues/34964",
+        "collected_at": "2026-09-18T17:11:39.383515+00:00"
+    }
+]
